@@ -1,6 +1,6 @@
-# React Hook的实现原理和最佳实践
+# React Hooks的实现原理和最佳实践
 
-## 在谈 react hook 之前
+## 在谈 react hooks 之前
 
 React的组件化给前端开发带来了前所未有的体验，我们可以像玩乐高玩具一样将一个组件堆积拼接起来，就组成了一个完整的UI界面，在加快了开发速度的同时又提高了代码的可维护性。但是随着业务功能复杂度提高，业务代码不得不和生命周期函数糅合到一起。这样很多重复的业务逻辑代码很难被抽离出来，为了快速开发不得不Ctrl+C，如果业务代码逻辑发生变化时，我们又不得不同时修改多个地方，极大的影响开发效率和可维护性。为了解决这个业务逻辑复用的问题，React官方也做了很多努力：
 
@@ -161,9 +161,9 @@ export default logTimeHOC(InnerLogTimeShowComponent)
 * 组件的嵌套层级太深。
 * 会导致ref丢失。
 
-## React Hook
+## React Hooks
 
-上面说了很多，无非就是告诉我们已经有解决功能复用的方案了。为啥还要React Hook这个呢？上面例子可以看出来，虽然解决了功能复用但是也带来了其他问题。由此官方给我带来`React Hook`,它不仅仅解决了功能复用的问题，还让我们以函数的方式创建组件，摆脱Class方式创建，从而不必在被this的工作方式困惑，不必在不同生命周期中处理业务。
+上面说了很多，无非就是告诉我们已经有解决功能复用的方案了。为啥还要React Hooks这个呢？上面例子可以看出来，虽然解决了功能复用但是也带来了其他问题。由此官方给我带来`React Hooks`,它不仅仅解决了功能复用的问题，还让我们以函数的方式创建组件，摆脱Class方式创建，从而不必在被this的工作方式困惑，不必在不同生命周期中处理业务。
 
 ```javascript
 import React,{ useState, useEffect } from 'react'
@@ -183,9 +183,9 @@ function useLogTime(data={log:true,time:true}){
     return {count}
 }
 ```
-我们通过`React Hook`的方式重新改写了上面日志时间记录高阶组件。如果不了解`React Hook`的基本用法建议先[阅读react hook文档](https://react.docschina.org/docs/hooks-reference.html)。如果想深入了解setInterval在Hook中的表现可以看这篇[重新 Think in Hooks](https://zhuanlan.zhihu.com/p/67183229)。
+我们通过`React Hooks`的方式重新改写了上面日志时间记录高阶组件。如果不了解`React Hooks`的基本用法建议先[阅读react hook文档](https://react.docschina.org/docs/hooks-reference.html)。如果想深入了解setInterval在Hook中的表现可以看这篇[重新 Think in Hooks](https://zhuanlan.zhihu.com/p/67183229)。
 
-假设我们已经掌握了`React Hook`,那么我来重写下上面的三个组件：
+假设我们已经掌握了`React Hooks`,那么我来重写下上面的三个组件：
 
 `LogComponent`：打印日志组件
 ```javascript
@@ -220,11 +220,11 @@ export default function LogTimeShowComponent (){
     )
 }
 ```
-我们用`React Hook`实现的这个三个组件和高阶组件一比较是不是发现更加清爽，更加PF。将日志打印和记录时间功能抽象出一个`useLogTime`自定义Hook。如果其他组件需要打印日志或者记录时间，只要直接调用`useLogTime`这个自定义Hook就可以了。是不是有种封装函数的感觉。
+我们用`React Hooks`实现的这个三个组件和高阶组件一比较是不是发现更加清爽，更加PF。将日志打印和记录时间功能抽象出一个`useLogTime`自定义Hooks。如果其他组件需要打印日志或者记录时间，只要直接调用`useLogTime`这个自定义Hooks就可以了。是不是有种封装函数的感觉。
 
-### React Hook实现原理
+### React Hooks实现原理
 
-如果让我们来实现一个`React Hook`我们如何实现呢？好像毫无头绪，可以先看一个简单的`useState`:(这部分内容只是帮我们更好的理解Hook工作原理，想了解Hook最佳实践可以直接查看[React 生产应用]())
+如果让我们来实现一个`React Hooks`我们如何实现呢？好像毫无头绪，可以先看一个简单的`useState`:(这部分内容只是帮我们更好的理解Hooks工作原理，想了解Hooks最佳实践可以直接查看[React 生产应用]())
 
 ```javascript
     function App(){
@@ -330,23 +330,23 @@ function useEffect(fn, watch) {
 ```
 修改核心是将`useState`,`useEffect`按照调用的顺序放入memoizedState中,每次更新时，按照顺序进行取值和判断逻辑--[查看Demo](https://codesandbox.io/s/dazzling-ardinghelli-j1gcs)
 
-* 图解React Hook 原理
+* 图解React Hooks 原理
 
-![图解Reat Hook](https://dimg04.c-ctrip.com/images/410a16000000yzafh4B8C.jpg)
+![图解Reat Hooks](https://dimg04.c-ctrip.com/images/410a16000000yzafh4B8C.jpg)
 
-如上图我们根据调用hook顺序，将hook依次存入数组`memoizedState`中，每次存入时都是将当前的`currentcursor`作为数组的下标，将其传入的值作为数组的值，然后在累加`currentcursor`，所以hook的状态值都被存入数组中`memoizedState`。
+如上图我们根据调用hooks顺序，将hooks依次存入数组`memoizedState`中，每次存入时都是将当前的`currentcursor`作为数组的下标，将其传入的值作为数组的值，然后在累加`currentcursor`，所以hooks的状态值都被存入数组中`memoizedState`。
 
-![图解React Hook执行更新](https://dimg04.c-ctrip.com/images/410516000000z0jd0D544.jpg)
+![图解React Hooks执行更新](https://dimg04.c-ctrip.com/images/410516000000z0jd0D544.jpg)
 
 上面状态更新图，我们可以看到执行`setCount(count + 1)`或`setData(data + 2)`时，先将旧数组`memoizedState`中对应的值取出来重新复值，从而生成新数组`memoizedState`。对于是否执行`useEffect`通过判断其第二个参数是否发生变化而决定的。
 
-这里我们就知道了为啥[官方文档介绍：](https://react.docschina.org/docs/hooks-rules.html)**不要在循环，条件或嵌套函数中调用 Hook， 确保总是在你的 React 函数的最顶层调用他们**。因为我们是根据调用hook的顺序依次将值存入数组中，如果在判断逻辑循环嵌套中，就有可能导致更新时不能获取到对应的值，从而导致取值混乱。同时`useEffect`第二个参数是数组，也是因为它就是以数组的形式存入的。
+这里我们就知道了为啥[官方文档介绍：](https://react.docschina.org/docs/hooks-rules.html)**不要在循环，条件或嵌套函数中调用 Hooks， 确保总是在你的 React 函数的最顶层调用他们**。因为我们是根据调用hooks的顺序依次将值存入数组中，如果在判断逻辑循环嵌套中，就有可能导致更新时不能获取到对应的值，从而导致取值混乱。同时`useEffect`第二个参数是数组，也是因为它就是以数组的形式存入的。
 
 当然，react官方不会像我们这么粗暴的方式去实现的，想了解官方是如何实现可以去[这里查看](https://github.com/facebook/react/blob/master/packages/react/src/ReactHooks.js)。
 
 ## React 生产应用
 
-在说到React实际工作应用之前，希望你能对React Hook有做过了解，知道如`useState`、`useEffect`、`useContext`等基本Hook的使用，以及如何自定义Hook，如果不了解可以[点击这里了解关于Hook的知识点](https://react.docschina.org/docs/hooks-intro.html)。
+在说到React实际工作应用之前，希望你能对React Hooks有做过了解，知道如`useState`、`useEffect`、`useContext`等基本Hooks的使用，以及如何自定义Hooks，如果不了解可以[点击这里了解关于Hook的知识点](https://react.docschina.org/docs/hooks-intro.html)。
 
 ### 如何模拟React的生命周期
 
@@ -355,11 +355,11 @@ function useEffect(fn, watch) {
 * componentDidUpdate：通过 useEffect 传入第二个参数为空或者为值变动的数组。
 * componentWillUnmount：主要用来清除副作用。通过 useEffect 函数 return 一个函数来模拟。
 * shouldComponentUpdate：你可以用 React.memo 包裹一个组件来对它的 props 进行浅比较。来模拟是否更新组件。
-* componentDidCatch and getDerivedStateFromError：目前还没有这些方法的 Hook 等价写法，但很快会加上。
+* componentDidCatch and getDerivedStateFromError：目前还没有这些方法的 Hooks 等价写法，但很快会加上。
 
-### 如何通过React Hook进行数据请求
+### 如何通过React Hooks进行数据请求
 
-前端页面免不了要和数据打交道，在Class组件中我们通常都是在`componentDidMount`生命周期中发起数据请求，然而我们使用Hook时该如何发送请求呢？
+前端页面免不了要和数据打交道，在Class组件中我们通常都是在`componentDidMount`生命周期中发起数据请求，然而我们使用Hooks时该如何发送请求呢？
 
 ```javascript
 import React,{ useState,useEffect } from 'react';
@@ -403,7 +403,7 @@ useEffect(() => {
 ```
 我们给第二个参数加上一个[\]发现页面就可以显示了，[将这个Demo中注释解除了](https://codesandbox.io/s/stoic-cache-yzf3p)。，我们就可以发现页面正常显示了。
 
-我们一个程序会有多个组件，很多组件都会有请求接口的逻辑，不能每个需要用到这个逻辑的时候都重新写或者Ctrl+C。所以我们需要将这个逻辑抽离出来作为一个公共的Hook来调用，那么我们就要用到自定义Hook。
+我们一个程序会有多个组件，很多组件都会有请求接口的逻辑，不能每个需要用到这个逻辑的时候都重新写或者Ctrl+C。所以我们需要将这个逻辑抽离出来作为一个公共的Hooks来调用，那么我们就要用到自定义Hooks。
 
 ```javascript
 // config =>  期望格式
@@ -445,7 +445,7 @@ function useFetchHook(config,watch){
 ```
 [点击查看Demo](https://codesandbox.io/s/busy-haze-ebw94),我们现在点检页面上的按钮发现页面的数据户一直发生变化，控制台也会打印，说明我们更改page时都会重新请求接口，上面的问题就解决了。
 
-上面的`useFetchHook`虽然可以解决大部分情况，但是一个健全的 接口请求Hook 还需要告知使用者接口请求状态的成功、失败。我们继续---
+上面的`useFetchHook`虽然可以解决大部分情况，但是一个健全的 接口请求Hooks 还需要告知使用者接口请求状态的成功、失败。我们继续---
 
 ```javascript
 function useFetchHook(config,watch){
@@ -521,7 +521,7 @@ class App extends Component{
     }
 }
 ```
-在类组件中我们可以直接将函数绑定到this对象上。在Hook组件中怎么解决呢？
+在类组件中我们可以直接将函数绑定到this对象上。在Hooks组件中怎么解决呢？
 
 ```javascript
 function App(){
@@ -535,9 +535,9 @@ function App(){
     )
 }
 ```
-如上直接用`useCallback`生成一个记忆函数，这样更新时就不会发生渲染了。在react Hook 中 还有一个`useMemo`也能实现同样的效果。
+如上直接用`useCallback`生成一个记忆函数，这样更新时就不会发生渲染了。在react Hooks 中 还有一个`useMemo`也能实现同样的效果。
 
-### React Hook 实现一个简版的redux
+### React Hooks 实现一个简版的redux
 
 React是从上而下的单向数据流，父子组件之间信息传递可以通过Props实现，兄弟组件的信息传递我们可以将Props提升到共同的父级实现信息传递，如果组件层级嵌套过深，对开发者来说是十分痛苦的。所以社区基于redux产生了react-redux工具，当然我们这里对react-redux做讲解，而是提供一种新的解决方案。
 
@@ -596,15 +596,15 @@ ReactDOM.render(
 [完整代码在这里获取](https://codesandbox.io/s/bold-thunder-xe8mb)
 
 
-### 一起来封装常用的Hook
+### 一起来封装常用的Hooks
 
-在开始封装常用Hook之前插一个题外话，我们在开发中时，不可能都是新项目；对于那些老项目（react已经升级到16.8.x）我们应该如何去使用Hook呢？其实很简单我们可以开发一些常用的hook，当我们老项目有新的功能我们完全可以用Hook去开发，如果对老的组件进行修改时我们就可以考虑给老组件上Hook；不建议一上来就进行大改。随着我们的常用Hook组件库的丰富，后期改起来也会非常快。
+在开始封装常用Hooks之前插一个题外话，我们在开发中时，不可能都是新项目；对于那些老项目（react已经升级到16.8.x）我们应该如何去使用Hooks呢？其实很简单我们可以开发一些常用的hooks，当我们老项目有新的功能我们完全可以用Hooks去开发，如果对老的组件进行修改时我们就可以考虑给老组件上Hooks；不建议一上来就进行大改。随着我们的常用Hooks组件库的丰富，后期改起来也会非常快。
 
-在使用Hook时难免少不了一些常用的Hook，如果可以将这些常用的Hook封装起来岂不是美滋滋！
+在使用Hooks时难免少不了一些常用的Hooks，如果可以将这些常用的Hooks封装起来岂不是美滋滋！
 
 首先可以创建如下目录结构：
 
-!['React Hook 目录结构'](https://dimg04.c-ctrip.com/images/410p16000000yzpa25956.jpg)
+!['React Hooks 目录结构'](https://dimg04.c-ctrip.com/images/410p16000000yzpa25956.jpg)
 
 index.js文件
 
@@ -617,7 +617,7 @@ export{
 }
 ```
 
-lib中存放常用Hook, 如实现一个useInterval：为啥我们需要一个useInterval的自定义Hook呢？
+lib中存放常用Hooks, 如实现一个useInterval：为啥我们需要一个useInterval的自定义Hooks呢？
 
 
 在程序中直接使用 setInterval
@@ -710,9 +710,9 @@ useInterval(() => {
 
 **开放思维**
 
-问题：做一个useImgLazy的 hook 函数。
+问题：做一个useImgLazy的 hooks 函数。
 
-*为提高网页的性能我们一般都会网页上图片资源做一些优化，懒加载就是一种方案，useImgLazy就是实现懒加载的 Hook*
+*为提高网页的性能我们一般都会网页上图片资源做一些优化，懒加载就是一种方案，useImgLazy就是实现懒加载的 Hooks*
 
 ```javascript
 // 判断是否在视口里面
@@ -770,9 +770,9 @@ function App(){
 以上`useImgLazy`代码我是写这篇文章时突然诞生的一个想法，没有验证，如果哪位同学验证后有问题还请告知我[在这里是反馈问题](https://github.com/myprelude/React-Hook-Library/issues)，如生产上使用产生问题我一概不负责。
 
 
-我相信大家看了这篇文章一定会蠢蠢欲动，创建一个自定义 Hook 。点击这里[你们使用过哪些自定义Hook函数](https://github.com/myprelude/React-Hook-Library/issues/1)你可以分享、学习其他人是如何自定义有趣的Hook。
+我相信大家看了这篇文章一定会蠢蠢欲动，创建一个自定义 Hooks 。点击这里[你们使用过哪些自定义Hooks函数](https://github.com/myprelude/React-Hook-Library/issues/1)你可以分享、学习其他人是如何自定义有趣的Hooks。
 
-这里可以分享Hook的最佳实践帮助我们更快的使用React Hook[说说Hook中的一些最佳实践##](https://github.com/myprelude/React-Hook-Library/issues/2)
+这里可以分享Hooks的最佳实践帮助我们更快的使用React Hooks[说说Hooks中的一些最佳实践##](https://github.com/myprelude/React-Hook-Library/issues/2)
 
 
 
