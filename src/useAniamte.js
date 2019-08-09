@@ -1,5 +1,46 @@
 import React,{ useState } form 'react';
+export default function useAnimate(initVal,type='Linear'){
+    const [value,setValue] = useState(initVal);
+    const typeFn = type.split('.');
+    let AnimateType = null;
+    try{
+        AnimateType = typeFn.reduce((obj,item)=>{
+            return obj[item]
+        },Tween) || Tween['Linear'];
+    }catch(err){
+        AnimateType = Tween['Linear'];
+        console.error(`Animation function type is error，only support :
+        [Linear,Quad.easeIn,Quad.easeOut,Quad.easeInOut,
+            Cubic.easeIn,Cubic.easeOut,Cubic.easeInOut,
+            Quart.easeIn,Quart.easeOut,Quart.easeInOut,
+            Quint.easeIn,Quint.easeOut,Quint.easeInOut,
+            Sine.easeIn,Sine.easeOut,Sine.easeInOut,
+            Expo.easeIn,Expo.easeOut,Expo.easeInOut,
+            Circ.easeIn,Circ.easeOut,Circ.easeInOut,
+            Elastic.easeIn,Elastic.easeOut,Elastic.easeInOut,
+            Back.easeIn,Back.easeOut,Back.easeInOut,
+            Bounce.easeIn,Bounce.easeOut,Bounce.easeInOut
+        ]`)
+    }
+    
+    function setAnimate(endVal,duration,current=0){
+        function step(){
+            current = current + 17;
+            if(current>=duration){
+                setValue(endVal);
+            }else{console.log(current)
+                requestAnimationFrame(step);
+                setValue(AnimateType(current,initVal,endVal-initVal,duration));
+            }
+        }
+        step()
+    }
+    return [value,setAnimate]
+}
 
+/*****************************************************************************************
+*                                 Util Start ---
+******************************************************************************************/
 /*
  * Tween.js
  * t: current time（当前时间）；
@@ -177,36 +218,33 @@ const Tween = {
         }
     }
 }
-export default function useAnimate(){
-	
-}
-function linear(t, b, c, d) { 
-    return c * t / d + b; 
-}
-function useAnimate(val){
-    const [value,setValue] = useState(val);
-    function changeValue(val,time){
-        const ping = Math.ceil(time/17);let t = 0;
-        function step(){
-            setTimeout(()=>{
-                t++;
-                if(t>=ping){
-                    setValue(value)
-                    return;
-                }else{
-                    setValue(linear(t,value,val-value,time))
-                    step()
-                }
-                
-            },17)
-        }
-        step()
-        
-        
+const requestAnimationFrame = (()=>{
+    return requestAnimationFrame || 
+    function(fn){
+        setTimeout(fn,17)
     }
-    return [value,changeValue]
+})();
+/*****************************************************************************************
+*                                 Util End ---
+******************************************************************************************/
+
+##########################################################################################
+##                                How to Use
+##########################################################################################
+/**
+import useAnimate from './useAnimate'
+export default function Ani(){
+    const[value,setAnimate] = useAnimate(10)
+    return(
+        <TouchableWithoutFeedback onPress={()=>{console.log(11);setAnimate(300,300)}}>
+            <View style={{height:40,width:40,backgroundColor:'red',
+            transform:[
+                {translateX:value}
+            ]
+            }}>
+            </View>
+        </TouchableWithoutFeedback>
+    )
 }
+**/
 
-const [value,changeValue] = useAnimate(0);
-
-setValue(100,300)
